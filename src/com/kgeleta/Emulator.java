@@ -3,14 +3,11 @@ package com.kgeleta;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Emulator extends JFrame implements KeyListener, ActionListener
+public class Emulator extends JFrame implements KeyListener, ActionListener, ItemListener
 {
     private AtomicBoolean pause = new AtomicBoolean(true);// = false;
     private Chip8 chip8 = new Chip8();
@@ -20,7 +17,6 @@ public class Emulator extends JFrame implements KeyListener, ActionListener
     public Emulator()
     {
         super();
-        chip8.initialize();
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 
@@ -35,9 +31,9 @@ public class Emulator extends JFrame implements KeyListener, ActionListener
         open.setShortcut(new MenuShortcut(KeyEvent.getExtendedKeyCodeForChar('o'), false));
         MenuItem exit = new MenuItem("Exit");
         exit.addActionListener(this);
-        MenuItem pauseItem = new MenuItem("Pause");
+        CheckboxMenuItem pauseItem = new CheckboxMenuItem("Pause");
         pauseItem.setShortcut(new MenuShortcut(KeyEvent.getExtendedKeyCodeForChar('p'), false));
-        pauseItem.addActionListener(this);
+        pauseItem.addItemListener(this);
 
         menuFile.add(open);
         menuFile.add(pauseItem);
@@ -63,6 +59,9 @@ public class Emulator extends JFrame implements KeyListener, ActionListener
         setResizable(false);
         setVisible(true);
         addKeyListener(this);
+
+        chip8.initialize();
+
     }
 
     @Override
@@ -120,6 +119,15 @@ public class Emulator extends JFrame implements KeyListener, ActionListener
                 chip8.key[i] = false;
     }
 
+    // itemListener
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        if(e.getItem().equals("Pause"))
+            pause.set(!pause.get());
+    }
+
+
     // ActionListener
 
     @Override
@@ -143,10 +151,6 @@ public class Emulator extends JFrame implements KeyListener, ActionListener
                     }catch(IOException ioe) {System.err.println("Wrong file path!");}
                 }
                 pause.set(false);
-                break;
-
-            case "Pause":
-                pause.set(!pause.get());
                 break;
 
             case "Exit":
