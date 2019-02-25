@@ -9,7 +9,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Emulator extends JFrame implements KeyListener, ActionListener, ItemListener
 {
-    private AtomicBoolean pause = new AtomicBoolean(true);// = false;
+    private final int offsetX = 10;
+    private final int offsetY = 60;
+
+    private final int smallX = 660;
+    private final int smallY = 400;
+    private final int smallPixelSize = 10;
+
+    private final int mediumX = 990;
+    private final int mediumY = 560;
+    private final int mediumPixelSize = 15;
+
+    private final int bigX = 1300;
+    private final int bigY = 720;
+    private final int bigPixelSize = 20;
+
+    private int pixelSize = smallPixelSize;
+
+    private AtomicBoolean pause = new AtomicBoolean(true);
+    private AtomicBoolean fileLoaded = new AtomicBoolean(false);
     private Chip8 chip8 = new Chip8();
     private final char[] keyMap = {'x','1','2','3','q','w','e','a','s','d','z','c','4','r','f','v'};
                                 //  0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
@@ -42,11 +60,25 @@ public class Emulator extends JFrame implements KeyListener, ActionListener, Ite
         Menu menuSettings = new Menu("Settings");
 //        emulation speed
 //        sound on/off
+
 //        screen size
+        Menu menuScreenSize = new Menu("Screen size");
+        MenuItem screenSmall = new MenuItem("Small");
+        screenSmall.addActionListener(this);
+        MenuItem screenMedium = new MenuItem("Medium");
+        screenMedium.addActionListener(this);
+        MenuItem screenBig = new MenuItem("Big");
+        screenBig.addActionListener(this);
+
+        menuScreenSize.add(screenSmall);
+        menuScreenSize.add(screenMedium);
+        menuScreenSize.add(screenBig);
+
 //        colors (?)
 
 //        Help
 
+        menuSettings.add(menuScreenSize);
 
 
         menuBar.add(menuFile);
@@ -55,7 +87,7 @@ public class Emulator extends JFrame implements KeyListener, ActionListener, Ite
         setMenuBar(menuBar);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(660,400);
+        setSize(smallX,smallY);
         setResizable(false);
         setVisible(true);
         addKeyListener(this);
@@ -76,7 +108,7 @@ public class Emulator extends JFrame implements KeyListener, ActionListener, Ite
             for(int y = 0; y < 32; y++)
             {
                 if(chip8.gfx[x][y])
-                    g.fillRect(10*x + 10,10*y + 60,10,10);
+                    g.fillRect(pixelSize*x + offsetX,pixelSize*y + offsetY,pixelSize,pixelSize);
             }
     }
 
@@ -86,7 +118,7 @@ public class Emulator extends JFrame implements KeyListener, ActionListener, Ite
     {
         while(true)
         {
-            if(!pause.get())
+            if(!pause.get() & fileLoaded.get())
             {
                 // emulate single cycle:
                 chip8.cycle();
@@ -133,10 +165,10 @@ public class Emulator extends JFrame implements KeyListener, ActionListener, Ite
     @Override
     public void actionPerformed(ActionEvent e)
     {
+        pause.set(true);
         switch(e.getActionCommand())
         {
             case "Open ROM...":
-                pause.set(true);
                 JFileChooser chooser = new JFileChooser();
                 FileNameExtensionFilter filter = new FileNameExtensionFilter(
                         "CHIP-8 ROMs", "c8", "ch8");
@@ -149,17 +181,30 @@ public class Emulator extends JFrame implements KeyListener, ActionListener, Ite
                     try {
                         chip8.loadFile(chooser.getSelectedFile().getAbsolutePath());
                     }catch(IOException ioe) {System.err.println("Wrong file path!");}
+                    fileLoaded.set(true);
                 }
-                pause.set(false);
                 break;
 
             case "Exit":
-
-                pause.set(true);
                 System.exit(0);
                 break;
-        }
 
+            case "Small":
+                setSize(smallX,smallY);
+                pixelSize = smallPixelSize;
+                break;
+
+            case "Medium":
+                setSize(mediumX,mediumY);
+                pixelSize = mediumPixelSize;
+                break;
+
+            case "Big":
+                setSize(bigX,bigY);
+                pixelSize = bigPixelSize;
+                break;
+        }
+        pause.set(false);
     }
 
     public static void main(String[] args) {
