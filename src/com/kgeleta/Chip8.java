@@ -45,6 +45,8 @@ public class Chip8
     public boolean[] key;    // 16 keys (0x0 - 0xF)
     public boolean drawFlag = false;
 
+    public int emulationSpeed = 1;
+
 
     public void initialize()
     {
@@ -368,7 +370,7 @@ public class Chip8
 
         // slow down
         try {
-            Thread.sleep(1);
+            Thread.sleep(emulationSpeed);
         }catch(InterruptedException ie){}
     }
 

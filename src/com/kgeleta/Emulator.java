@@ -59,6 +59,9 @@ public class Emulator extends JFrame implements KeyListener, ActionListener, Ite
 
         Menu menuSettings = new Menu("Settings");
 //        emulation speed
+        MenuItem speed = new MenuItem("Emulation speed");
+        speed.addActionListener(this);
+
 //        sound on/off
 
 //        screen size
@@ -79,6 +82,7 @@ public class Emulator extends JFrame implements KeyListener, ActionListener, Ite
 //        Help
 
         menuSettings.add(menuScreenSize);
+        menuSettings.add(speed);
 
 
         menuBar.add(menuFile);
@@ -202,6 +206,21 @@ public class Emulator extends JFrame implements KeyListener, ActionListener, Ite
             case "Big":
                 setSize(bigX,bigY);
                 pixelSize = bigPixelSize;
+                break;
+
+            case "Emulation speed":
+                String speedStr = JOptionPane.showInputDialog(this,"Number of milliseconds for single emulation cycle: ", chip8.emulationSpeed);
+                try
+                {
+                    int speedInt = Integer.parseInt(speedStr);
+                    if(speedInt < 0 || speedInt > 5000)
+                        JOptionPane.showMessageDialog(this, "Value should be in range 0 to 5000", "Wrong value", JOptionPane.WARNING_MESSAGE);
+                    else
+                        chip8.emulationSpeed = speedInt;
+                } catch (NumberFormatException nfe)
+                {
+                    JOptionPane.showMessageDialog(this, "Wrong format!", "Format error", JOptionPane.ERROR_MESSAGE);
+                }
                 break;
         }
         pause.set(false);
