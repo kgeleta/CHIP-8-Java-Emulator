@@ -9,6 +9,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Emulator extends JFrame implements KeyListener, ActionListener, ItemListener
 {
+    private final String title = "CHIP-8 Emulator";
+
     private final int offsetX = 10;
     private final int offsetY = 60;
 
@@ -92,6 +94,7 @@ public class Emulator extends JFrame implements KeyListener, ActionListener, Ite
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(smallX,smallY);
+        setTitle(title);
         setResizable(false);
         setVisible(true);
         addKeyListener(this);
@@ -184,6 +187,7 @@ public class Emulator extends JFrame implements KeyListener, ActionListener, Ite
                     chip8.initialize();
                     try {
                         chip8.loadFile(chooser.getSelectedFile().getAbsolutePath());
+                        setTitle(title + ": " + chooser.getSelectedFile().getName());
                     }catch(IOException ioe) {System.err.println("Wrong file path!");}
                     fileLoaded.set(true);
                 }
