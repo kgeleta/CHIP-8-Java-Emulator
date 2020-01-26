@@ -1,7 +1,7 @@
 # CHIP-8-Java-Emulator
 CHIP-8 emulator wrote in Java. The main goal of this project was to better understand how CPU and memory works. 
 Also emulators are super cool and I always wanted to write one. Note for future: Java is not the best language for this
-type of projects (no unsigned types is one but not the only problem).
+type of projects (lack of unsigned types is one but not the only problem).
 
 # Overview
 ![](images/pong.png)
